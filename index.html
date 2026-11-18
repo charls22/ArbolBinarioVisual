@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arbol Binario Visual | Charles Huaman Villano</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    padding: 25px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+h1 { margin: 0; font-size: 25px; }
+
+header p {
+    color: #94a3b8;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.autor { color: #94a3b8; font-size: 13px; }
+
+main {
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px 20px 35px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #334155;
+    margin-bottom: 20px;
+}
+
+.tab {
+    background: transparent;
+    color: #94a3b8;
+    border: 0;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tab.active {
+    color: #60a5fa;
+    border-bottom: 3px solid #3b82f6;
+}
+
+.card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+h2 { font-size: 18px; }
+
+input {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid #3b82f6;
+    color: white;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    margin: 12px 0;
+}
+
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 17px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px 4px 5px 0;
+}
+
+button:hover { filter: brightness(1.2); }
+.blue { background: #2563eb; }
+.green { background: #15803d; }
+.purple { background: #9333ea; }
+.gray { background: #475569; }
+
+#tree {
+    width: 100%;
+    min-height: 300px;
+    background: #111d33;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.node {
+    fill: #2563eb;
+    stroke: white;
+    stroke-width: 2;
+    transition: fill .2s;
+}
+
+.node.visited { fill: #16a34a; }
+
+.node-text {
+    fill: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+.edge {
+    stroke: #64748b;
+    stroke-width: 2;
+}
+
+.result {
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 18px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.status { color: #94a3b8; font-size: 13px; }
+
+.hidden { display: none; }
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+@media(max-width:600px) {
+    header { align-items: flex-start; }
+    h1 { font-size: 20px; }
+    .tab { padding: 12px 9px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>🌳 ARBOL BINARIO VISUAL</h1>
+        <p>Construccion y recorridos de estructuras binarias</p>
+    </div>
+    <div class="autor">Charles Huaman Villano</div>
+</header>
+
+<main>
+
+<div class="tabs">
+    <button class="tab active" onclick="mostrarTab('constructor',this)">
+        Constructor
+    </button>
+    <button class="tab" onclick="mostrarTab('recorridos',this)">
+        Recorridos
+    </button>
+    <button class="tab" onclick="mostrarTab('info',this)">
+        Informacion
+    </button>
+</div>
+
+<section id="constructor">
+
+<div class="card">
+    <h2>Construir arbol binario</h2>
+    <p class="status">
+        Ingresa numeros enteros separados por comas.
+        Se organizaran por niveles, de izquierda a derecha.
+    </p>
+
+    <input id="datos" value="1, 2, 3, 4, 5, 6, 7"
+           placeholder="Ejemplo: 1, 2, 3, 4, 5">
+
+    <button class="blue" onclick="construir()">
+        Construir arbol
+    </button>
+
+    <button class="gray" onclick="limpiar()">
+        Limpiar
+    </button>
+    <p id="estado" class="status">Sistema listo.</p>
+</div>
+
+<div class="card">
+    <h2>Visualizacion del arbol</h2>
+    <svg id="tree" viewBox="0 0 1000 500"
+         role="img" aria-label="Visualizacion del arbol binario">
+        <text x="500" y="250" fill="#94a3b8"
+              text-anchor="middle">
+            Ingresa los valores y construye tu arbol
+        </text>
+    </svg>
+</div>
+
+</section>
+
+<section id="recorridos" class="hidden">
+
+<div class="card">
+    <h2>Selecciona un recorrido</h2>
+    <p class="status">
+        Selecciona un algoritmo para visualizar el orden de visita.
+    </p>
+
+    <button class="blue" onclick="ejecutar('pre')">
+        PREORDEN
+    </button>
+
+    <button class="green" onclick="ejecutar('in')">
+        INORDEN
+    </button>
+
+    <button class="purple" onclick="ejecutar('post')">
+        POSTORDEN
+    </button>
+</div>
+
+<div class="card">
+    <h2>Resultado del recorrido</h2>
+    <div id="resultado" class="result">
+        Los resultados apareceran aqui.
+    </div>
+</div>
+
+</section>
+
+<section id="info" class="hidden">
+
+<div class="card">
+    <h2>Acerca del proyecto</h2>
+    <p>
+        ArbolBinarioVisual es un proyecto educativo
+        desarrollado para comprender las estructuras
+        de datos y los recorridos de arboles binarios.
+    </p>
+
+    <h3>1. Preorden</h3>
+    <p>Raiz → Izquierda → Derecha</p>
+
+    <h3>2. Inorden</h3>
+    <p>Izquierda → Raiz → Derecha</p>
+
+    <h3>3. Postorden</h3>
+    <p>Izquierda → Derecha → Raiz</p>
+
+    <h3>Tecnologias</h3>
+    <p>Java, Java Swing, HTML, CSS y JavaScript.</p>
+
+    <h3>Desarrollador</h3>
+    <p>Charles Huaman Villano</p>
+</div>
+
+</section>
+
+</main>
+
+<footer>
+    © 2026 Charles Huaman Villano | Arbol Binario Visual
+</footer>
+
+<script>
+
+let raiz = null;
+let recorrido = [];
+let temporizador = null;
+
+function mostrarTab(id, boton) {
+    document.querySelectorAll("main section")
+        .forEach(s => s.classList.add("hidden"));
+
+    document.getElementById(id).classList.remove("hidden");
+
+    document.querySelectorAll(".tab")
+        .forEach(b => b.classList.remove("active"));
+
+    boton.classList.add("active");
+}
+
+function construir() {
+    detenerAnimacion();
+
+    const texto = document.getElementById("datos").value.trim();
+
+    if (!texto) {
+        alert("Ingresa los valores del arbol.");
+        return;
+    }
+
+    const partes = texto.split(",");
+    const valores = partes.map(x => x.trim());
+
+    if (valores.some(x => !/^-?\d+$/.test(x)) ||
+        valores.some(x => x === "")) {
+        alert("Ingresa solamente numeros enteros separados por comas.");
+        return;
+    }
+
+    const numeros = valores.map(Number);
+
+    if (numeros.some(x => !Number.isSafeInteger(x))) {
+        alert("Uno de los numeros es demasiado grande.");
+        return;
+    }
+
+    raiz = {
+        dato: numeros[0],
+        izquierdo: null,
+        derecho: null
+    };
+
+    let cola = [raiz];
+    let i = 1;
+
+    while (i < numeros.length) {
+        let actual = cola.shift();
+
+        actual.izquierdo = {
+            dato: numeros[i++],
+            izquierdo: null,
+            derecho: null
+        };
+
+        cola.push(actual.izquierdo);
+
+        if (i < numeros.length) {
+            actual.derecho = {
+                dato: numeros[i++],
+                izquierdo: null,
+                derecho: null
+            };
+
+            cola.push(actual.derecho);
+        }
+    }
+
+    document.getElementById("estado").textContent =
+        "Arbol creado correctamente. Total de nodos: " + numeros.length;
+
+    document.getElementById("resultado").textContent =
+        "Arbol creado con " + numeros.length + " nodos.";
+
+    dibujar();
+}
+
+function dibujar() {
+    const svg = document.getElementById("tree");
+
+    if (!raiz) return;
+
+    let nodos = [];
+    let maxNivel = 0;
+
+    function contar(nodo, nivel) {
+        if (!nodo) return;
+        maxNivel = Math.max(maxNivel, nivel);
+        contar(nodo.izquierdo, nivel + 1);
+        nodos.push({nodo, nivel});
+        contar(nodo.derecho, nivel + 1);
+    }
+
+    contar(raiz, 0);
+
+    const ancho = Math.max(1000, nodos.length * 85);
+    const alto = Math.max(500, (maxNivel + 1) * 110 + 80);
+
+    svg.setAttribute("viewBox", 0 0 ${ancho} ${alto});
+    svg.innerHTML = "";
+
+    let posiciones = new Map();
+
+    nodos.forEach((item, i) => {
+        posiciones.set(item.nodo, {
+            x: (i + 1) * ancho / (nodos.length + 1),
+            y: 65 + item.nivel * 100
+        });
+    });
+
+    function crearElemento(nombre, atributos) {
+        const el = document.createElementNS(
+            "http://www.w3.org/2000/svg", nombre
+        );
+
+        Object.entries(atributos).forEach(([k,v]) =>
+            el.setAttribute(k,v)
+        );
+
+        svg.appendChild(el);
+        return el;
+    }
+
+    function dibujarConexiones(nodo) {
+        if (!nodo) return;
+
+        const p = posiciones.get(nodo);
+
+        [nodo.izquierdo, nodo.derecho].forEach(hijo => {
+            if (hijo) {
+                const q = posiciones.get(hijo);
+
+                crearElemento("line", {
+                    x1:p.x, y1:p.y,
+                    x2:q.x, y2:q.y,
+                    class:"edge"
+                });
+
+                dibujarConexiones(hijo);
+            }
+        });
+    }
+
+    dibujarConexiones(raiz);
+
+    nodos.forEach(item => {
+        const p = posiciones.get(item.nodo);
+
+        const circulo = crearElemento("circle", {
+            cx:p.x, cy:p.y, r:25,
+            class:"node",
+            id:"nodo-" + posiciones.get(item.nodo).x
+        });
+
+        const texto = crearElemento("text", {
+            x:p.x, y:p.y,
+            class:"node-text"
+        });
+
+        texto.textContent = item.nodo.dato;
+    });
+}
+
+function obtenerRecorrido(tipo) {
+    let lista = [];
+
+    function pre(n) {
+        if (!n) return;
+        lista.push(n);
+        pre(n.izquierdo);
+        pre(n.derecho);
+    }
+
+    function ino(n) {
+        if (!n) return;
+        ino(n.izquierdo);
+        lista.push(n);
+        ino(n.derecho);
+    }
+
+    function post(n) {
+        if (!n) return;
+        post(n.izquierdo);
+        post(n.derecho);
+        lista.push(n);
+    }
+
+    if (tipo === "pre") pre(raiz);
+    if (tipo === "in") ino(raiz);
+    if (tipo === "post") post(raiz);
+
+    return lista;
+}
+
+function detenerAnimacion() {
+    if (temporizador) clearInterval(temporizador);
+    temporizador = null;
+}
+
+function ejecutar(tipo) {
+    detenerAnimacion();
+
+    if (!raiz) {
+        alert("Primero construye un arbol.");
+        return;
+    }
+
+    recorrido = obtenerRecorrido(tipo);
+
+    const nombres = {
+        pre:"PREORDEN",
+        in:"INORDEN",
+        post:"POSTORDEN"
+    };
+
+    const color = {
+        pre:"#2563eb",
+        in:"#15803d",
+        post:"#9333ea"
+    };
+
+    const resultado = document.getElementById("resultado");
+
+    resultado.textContent =
+        nombres[tipo] + "\n\n" +
+        recorrido.map(n => n.dato).join(" → ") +
+        "\n\nTotal de nodos: " + recorrido.length;
+
+    let i = 0;
+
+    temporizador = setInterval(() => {
+        if (i >= recorrido.length) {
+            detenerAnimacion();
+            return;
+        }
+
+        const nodo = recorrido[i];
+
+        const svg = document.getElementById("tree");
+
+        const circulos = svg.querySelectorAll("circle");
+
+        // Reiniciar los colores
+        circulos.forEach(c => {
+            c.classList.remove("visited");
+        });
+
+        // Marcar los nodos visitados
+        for (let j = 0; j <= i; j++) {
+            const actual = recorrido[j];
+            const posicion = buscarCirculo(actual);
+            if (posicion) posicion.classList.add("visited");
+        }
+
+        i++;
+    }, 500);
+}
+
+function buscarCirculo(nodo) {
+    const svg = document.getElementById("tree");
+    const circulos = svg.querySelectorAll("circle");
+
+    // Localizar el nodo por su posición de recorrido visual
+    let encontrados = [];
+
+    function buscar(n) {
+        if (!n) return;
+        encontrados.push(n);
+        buscar(n.izquierdo);
+        buscar(n.derecho);
+    }
+
+    buscar(raiz);
+
+    const indice = encontrados.indexOf(nodo);
+    return indice >= 0 ? circulos[indice] : null;
+}
+
+function limpiar() {
+    detenerAnimacion();
+    raiz = null;
+    recorrido = [];
+
+    document.getElementById("tree").setAttribute("viewBox","0 0 1000 500");
+    document.getElementById("tree").innerHTML =
+        '<text x="500" y="250" fill="#94a3b8" text-anchor="middle">Ingresa los valores y construye tu arbol</text>';
+
+    document.getElementById("datos").value = "";
+    document.getElementById("resultado").textContent =
+        "Los resultados apareceran aqui.";
+
+    document.getElementById("estado").textContent =
+        "Arbol eliminado. Puedes construir uno nuevo.";
+}
+
+construir();
+
+</script>
+
+</body>
+</html>
